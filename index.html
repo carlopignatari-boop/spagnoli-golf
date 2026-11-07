@@ -1,1 +1,439 @@
-<!doctype html><meta charset="utf-8"><title>A. Spagnoli</title><p>In attesa del primo aggiornamento dati FIG…</p>
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A. Spagnoli — Ultime 20 gare</title>
+<style>
+:root{
+  --bg:#0f1117;--card:#1a1d27;--elevated:#23273a;--text:#e2e8f0;--muted:#8892a4;
+  --accent:#60a5fa;--ok:#34d399;--warn:#fbbf24;--border:#2d3348;--radius:10px;
+  --sim:#a78bfa;--proj:#fb923c;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  background:var(--bg);color:var(--text);padding:16px;font-size:14px;min-height:100vh}
+h1{font-size:20px;font-weight:700;margin-bottom:4px}
+.subtitle{color:var(--muted);font-size:12px;margin-bottom:14px}
+/* toolbar */
+.toolbar{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.btn{padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;
+  border:1px solid var(--border);background:var(--elevated);color:var(--text);
+  transition:all .2s;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{opacity:.85}
+.btn-back{border-color:var(--muted);color:var(--muted)}
+.btn-sim.active{background:color-mix(in srgb,var(--sim) 20%,transparent);
+  border-color:var(--sim);color:var(--sim)}
+.btn-proj.active{background:color-mix(in srgb,var(--proj) 20%,transparent);
+  border-color:var(--proj);color:var(--proj)}
+/* proiezione panel */
+.proj-panel{display:none;margin-bottom:16px;
+  background:color-mix(in srgb,var(--proj) 8%,transparent);
+  border:1px solid color-mix(in srgb,var(--proj) 35%,transparent);
+  border-radius:var(--radius);padding:14px 16px}
+.proj-panel.open{display:block}
+.proj-panel h3{font-size:13px;font-weight:700;color:var(--proj);margin-bottom:10px}
+.proj-fields{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;margin-bottom:10px}
+.proj-field label{display:block;font-size:11px;color:var(--muted);margin-bottom:4px;
+  text-transform:uppercase}
+.proj-field input{background:var(--elevated);border:1px solid var(--border);
+  color:var(--text);padding:6px 10px;border-radius:6px;font-size:14px;
+  font-weight:600;width:90px}
+.proj-field input:focus{outline:none;border-color:var(--proj)}
+.btn-calc{padding:7px 14px;border-radius:6px;font-size:13px;font-weight:700;
+  cursor:pointer;border:none;background:var(--proj);color:#0f1117}
+.proj-result{font-size:12px;color:var(--proj);margin-top:8px;line-height:1.7;display:none}
+.proj-result.show{display:block}
+/* banner */
+.banner{display:none;border-radius:var(--radius);padding:9px 14px;
+  font-size:12px;line-height:1.6;margin-bottom:14px}
+.banner.sim{display:block;
+  background:color-mix(in srgb,var(--sim) 8%,transparent);
+  border:1px solid color-mix(in srgb,var(--sim) 35%,transparent);color:var(--sim)}
+.banner.proj{display:block;
+  background:color-mix(in srgb,var(--proj) 8%,transparent);
+  border:1px solid color-mix(in srgb,var(--proj) 35%,transparent);color:var(--proj)}
+/* summary */
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  gap:12px;margin-bottom:20px}
+.card{background:var(--card);border-radius:var(--radius);padding:14px 16px;
+  border:1px solid var(--border);transition:border-color .2s}
+.card.hi {border-color:var(--sim)}
+.card.hi2{border-color:var(--proj)}
+.card-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.card-value{font-size:26px;font-weight:800;color:var(--accent);
+  line-height:1.1;margin:4px 0 2px;transition:color .2s}
+.card-value.hi {color:var(--sim)}
+.card-value.hi2{color:var(--proj)}
+.card-sub{font-size:11px;color:var(--muted)}
+/* tabella */
+.table-wrap{overflow-x:auto;border-radius:var(--radius);border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;min-width:700px}
+thead{background:var(--elevated)}
+th{padding:8px 10px;text-align:left;font-size:10px;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.06em;
+  border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:7px 10px;border-bottom:1px solid var(--border);
+  white-space:nowrap;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr.best    td:first-child{border-left:3px solid var(--ok)}
+tr.best                  {background:color-mix(in srgb,var(--ok)  8%,transparent)}
+tr.sim-best td:first-child{border-left:3px solid var(--sim)}
+tr.sim-best              {background:color-mix(in srgb,var(--sim) 8%,transparent)}
+tr.proj-best td:first-child{border-left:3px solid var(--proj)}
+tr.proj-best             {background:color-mix(in srgb,var(--proj)8%,transparent)}
+tr.out      {opacity:.35}
+tr:not(.best):not(.sim-best):not(.proj-best) td:first-child{border-left:3px solid transparent}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.badge-ok  {display:inline-block;background:var(--ok);  color:#0f1117;border-radius:4px;padding:1px 7px;font-size:10px;font-weight:700}
+.badge-warn{display:inline-block;background:var(--warn);color:#0f1117;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:700}
+.badge-sim {display:inline-block;background:var(--sim); color:#0f1117;border-radius:4px;padding:1px 7px;font-size:10px;font-weight:700}
+.badge-proj{display:inline-block;background:var(--proj);color:#0f1117;border-radius:4px;padding:1px 7px;font-size:10px;font-weight:700}
+.var-pos{color:#f87171;font-size:12px}
+.var-neg{color:var(--ok);font-size:12px}
+.var-neu{color:var(--muted);font-size:12px}
+.link-cell a{color:var(--accent);text-decoration:none;font-size:12px;opacity:.8}
+.link-cell a:hover{opacity:1;text-decoration:underline}
+.legend{margin-top:14px;font-size:11px;color:var(--muted);
+  display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+.leg{display:flex;align-items:center;gap:6px}
+.dot{width:10px;height:10px;border-radius:2px;display:inline-block}
+.note-box{margin-top:14px;
+  background:color-mix(in srgb,var(--warn) 10%,transparent);
+  border:1px solid color-mix(in srgb,var(--warn) 40%,transparent);
+  border-radius:var(--radius);padding:10px 14px;
+  font-size:12px;color:var(--warn);line-height:1.6}
+</style>
+</head>
+<body>
+<h1>🏌️ A. Spagnoli — Ultime 20 gare valide</h1>
+<div class="subtitle">Dati reali FIG (Valida = S) · Aggiornato il 07/11/2026 22:14</div>
+
+<div class="toolbar">
+  <button class="btn btn-back" id="btnBack" onclick="goReal()" style="display:none">← Dati reali</button>
+  <button class="btn btn-sim" id="btnSim" onclick="toggleSim()" >🔮 Simula gara odierna</button>
+  <button class="btn btn-proj" id="btnProj" onclick="toggleProj()">📐 Proiezione nuova gara</button>
+</div>
+
+<div class="proj-panel" id="projPanel">
+  <h3>📐 Inserisci i dati di una gara non ancora in FIG</h3>
+  <div class="proj-fields">
+    <div class="proj-field"><label>Stableford</label>
+      <input type="number" id="pStbl" min="0" max="72" placeholder="es. 34" inputmode="numeric"></div>
+    <div class="proj-field"><label>AGS</label>
+      <input type="number" id="pAgs" placeholder="es. 101" inputmode="numeric"></div>
+    <div class="proj-field"><label>CR</label>
+      <input type="number" id="pCr" value="72.2" step="0.1" inputmode="decimal"></div>
+    <div class="proj-field"><label>SR</label>
+      <input type="number" id="pSr" value="127.0" inputmode="numeric"></div>
+    <div class="proj-field"><label>Par</label>
+      <input type="number" id="pPar" value="72" inputmode="numeric"></div>
+    <button class="btn-calc" onclick="calcProj()">Calcola →</button>
+  </div>
+  <div class="proj-result" id="projResult"></div>
+</div>
+
+<div class="banner" id="banner"></div>
+
+<div class="summary" id="summary">
+  <div class="card" id="cN">
+    <div class="card-label">Gare nel calcolo</div>
+    <div class="card-value" id="vN">8<span style="font-size:14px;color:var(--muted)">/20</span></div>
+    <div class="card-sub">migliori 8 SD</div>
+  </div>
+  <div class="card" id="cAvg">
+    <div class="card-label">Media SD — Top 8</div>
+    <div class="card-value" id="vAvg">14.2</div>
+    <div class="card-sub">Score Differenziale medio</div>
+  </div>
+  <div class="card" id="cBest">
+    <div class="card-label">Miglior SD</div>
+    <div class="card-value" id="vBest">9.6</div>
+    <div class="card-sub">performance migliore</div>
+  </div>
+  <div class="card" id="cStbl">
+    <div class="card-label">Media Stbl — Top 8</div>
+    <div class="card-value" id="vStbl">37.6</div>
+    <div class="card-sub">punti Stableford medi</div>
+  </div>
+  <div class="card">
+    <div class="card-label">Index attuale FIG</div>
+    <div class="card-value">13.8</div>
+    <div class="card-sub">ultimo elaborato</div>
+  </div>
+</div>
+
+<div class="table-wrap">
+<table>
+<thead>
+  <tr>
+    <th>#</th><th>Data</th><th>Gara</th><th>Circolo</th>
+    <th class="num">Stbl</th><th class="num">AGS</th><th class="num">PCC</th>
+    <th class="num">SD</th><th class="num">Index</th><th class="num">Var.</th>
+    <th>Stato</th><th>Scheda</th>
+  </tr>
+</thead>
+<tbody id="tbody">
+<tr  data-n="1" data-sd="" data-sd-est="19.4" data-pending="true" data-cr="72.2" data-sr="127.0" data-stbl="30.0" data-ags="94" data-gara="COPPA DEL PRESIDENTE" data-circolo="MODENA"><td>1</td><td>07/11/2026</td><td>COPPA DEL PRESIDENTE</td><td>MODENA</td><td class="num">30.0</td><td class="num">94</td><td class="num">—</td><td class="num sd-cell"><span class="badge-warn">?</span></td><td class="num">13.8</td><td class="num"><span class="var-neu">—</span></td><td class="top8-cell"><span class="badge-warn">⚠ pending</span></td><td class="link-cell"><a href="https://areariservata.federgolf.it/Risultati/ViewDetail/850d978e-c6da-f111-84e8-7c1e524f85e3" target="_blank" rel="noopener noreferrer">↗ scheda</a></td></tr>
+<tr class="best" data-n="2" data-sd="14.9" data-sd-est="" data-pending="false" data-cr="72.2" data-sr="127.0" data-stbl="35.0" data-ags="89" data-gara="WEEKLY BPER BANCA CUP - 11^ PROVA" data-circolo="MODENA"><td>2</td><td>15/10/2026</td><td>WEEKLY BPER BANCA CUP - 11^ PROVA</td><td>MODENA</td><td class="num">35.0</td><td class="num">89</td><td class="num">0.0</td><td class="num sd-cell">14.9</td><td class="num">13.8</td><td class="num"><span class="var-neg">-0.1</span></td><td class="top8-cell"><span class="badge-ok">★ TOP 8</span></td><td class="link-cell"><a href="https://areariservata.federgolf.it/Risultati/ViewDetail/f6aa0783-c4c8-f111-aaad-7ced8d8bfeb7" target="_blank" rel="noopener noreferrer">↗ scheda</a></td></tr>
+<tr class="best" data-n="3" data-sd="15.8" data-sd-est="" data-pending="false" data-cr="72.2" data-sr="127.0" data-stbl="34.0" data-ags="90" data-gara="ROTARY ROAD TO OPORTO BY ADESSO SOLE" data-circolo="MODENA"><td>3</td><td>26/09/2026</td><td>ROTARY ROAD TO OPORTO BY ADESSO SOLE</td><td>MODENA</td><td class="num">34.0</td><td class="num">90</td><td class="num">0.0</td><td class="num sd-cell">15.8</td><td class="num">13.9</td><td class="num"><span class="var-neg">-0.1</span></td><td class="top8-cell"><span class="badge-ok">★ TOP 8</span></td><td class="link-cell"><a href="https://areariservata.federgolf.it/Risultati/ViewDetail/3174422f-cab9-f111-aaae-000d3aa9a289" target="_blank" rel="noopener noreferrer">↗ scheda</a></td></tr>
+<tr class="best" data-n="4" data-sd="15.8" data-sd-est="" data-pending="false" data-cr="72.2" data-sr="127.0" data-stbl="34.0" data-ags="90" data-gara="TROFEO PARMIGIANO REGGIANO 2026 -12^ Pro" data-circolo="MODENA"><td>4</td><td>23/09/2026</td><td>TROFEO PARMIGIANO REGGIANO 2026 -12^ Pro</td><td>MODENA</td><td class="num">34.0</td><td class="num">90</td><td class="num">0.0</td><td class="num sd-cell">15.8</td><td class="num">14.0</td><td class="num"><span class="var-neg">-0.2</span></td><td class="top8-cell"><span class="badge-ok">★ TOP 8</span></td><td class="link-cell"><a href="https://areariservata.federgolf.it/Risultati/ViewDetail/b7852624-56b7-f111-aaac-000d3aa9a289" target="_blank" rel="noopener noreferrer">↗ scheda</a></td></tr>
+<tr class="best" data-n="5" data-sd="14.1" data-sd-est="" data-pending="false" data-cr="72.2" data-sr="127.0" data-stbl="37.0" data-ags="88" data-gara="TROFEO EVO INFISSI" data-circolo="MODENA"><td>5</td><td>19/09/2026</td><td>TROFEO EVO INFISSI</td><td>MODENA</td><td class="num">37.0</td><td class="num">88</td><td class="num">0.0</td><td class="num sd-cell">14.1</td><td class="num">14.2</td><td class="num"><span class="var-neg">-0.4</span></td><td class="top8-cell"><span class="badge-ok">★ TOP 8</span></td><td class="link-cell"><a href="https://areariservata.federgolf.it/Risultati/ViewDetail/1eafa309-c3b4-f111-aaac-6045bd96fca1" target="_blank" rel="noopener noreferrer">↗ scheda</a></td></tr>
+<tr  data-n="6" data-sd="28.3" data-sd-est="" data-pending="false" data-cr="72.2" data-sr="127.0" data-stbl="21.0" data-ags="104" data-gara="WEEKLY BPER BANCA CUP - 9^ Prova" data-circolo="MODENA"><td>6</td><td>16/09/2026</td><td>WEEKLY BPER BANCA CUP - 9^ Prova</td><td>MODENA</td><td class="num">21.0</td><td class="num">104</td><td class="num">0.0</td><td class="num sd-cell">28.3</td><td class="num">14.6</td><td class="num"><span class="var-neu">—</span></td><td class="top8-cell"></td><td class="link-cell"><a href="https://areariservata.federgolf.it/Risultati/ViewDetail/21acce7b-e0b1-f111-aaac-000d3aa9a289" target="_blank" rel="noopener noreferrer">↗ scheda</a></td></tr>
+<tr class="best" data-n="7" data-sd="14.9" data-sd-est="" data-pending="false" data-cr="72.2" data-sr="127.0" data-stbl="36.0" data-ags="89" data-gara="SLURP GELATERIA GOLF CUP" data-circolo="MODENA"><td>7</td><td>10/09/2026</td><td>SLURP GELATERIA GOLF CUP</td><td>MODENA</td><td class="num">36.0</td><td class="num">89</td><td class="num">0.0</td><td class="num sd-cell">14.9</td><td class="num">14.6</td><td class="num"><span class="var-neg">-0.5</span></td><td class="top8-cell"><span class="badge-ok">★ TOP 8</span></td><td class="link-cell"><a href="https://areariservata.federgolf.it/Risultati/ViewDetail/5d854c21-0fad-f111-aaac-7c1e5228da62" target="_blank" rel="noopener noreferrer">↗ scheda</a></td></tr>
+<tr  data-n="8" data-sd="20.3" data-sd-est="" data-pending="false" data-cr="72.2" data-sr="127.0" data-stbl="30.0" data-ags="95" data-gara="CHALLENGE DIAMANTEE BLONDI" data-circolo="MODENA"><td>8</td><td>06/09/2026</td><td>CHALLENGE DIAMANTEE BLONDI</td><td>MODENA</td><td class="num">30.0</td><td class="num">95</td><td class="num">0.0</td><td class="num sd-cell">20.3</td><td class="num">15.1</td><td class="num"><span class="var-neu">—</span></td><td class="top8-cell"></td><td class="link-cell"><a href="https://areariservata.federgolf.it/Risultati/ViewDetail/d6bbd133-17aa-f111-aaac-70a8a5a06624" target="_blank" rel="noopener noreferrer">↗ scheda</a></td></tr>
+<tr  data-n="9" data-sd="22.1" data-sd-est="" data-pending="false" data-cr="72.2" data-sr="127.0" data-stbl="28.0" data-ags="97" data-gara="ITINERA TUSCANY CHALLENGE" data-circolo="MODENA"><td>9</td><td>03/09/2026</td><td>ITINERA TUSCANY CHALLENGE</td><td>MODENA</td><td class="num">28.0</td><td class="num">97</td><td class="num">0.0</td><td class="num sd-cell">22.1</td><td class="num">15.1</td><td class="num"><span class="var-neu">—</span></td><td class="top8-cell"></td><td class="link-cell"><a href="https://areariservata.federgolf.it/Risultati/ViewDetail/9332cc75-c3a7-f111-b8dd-000d3aa9a209" target="_blank" rel="noopener noreferrer">↗ scheda</a></td></tr>
+<tr  data-n="10" data-sd="20.3" data-sd-est="" data-pending="false" data-cr="72.2" data-sr="127.0" data-stbl="30.0" data-ags="95" data-gara="TOURISTGOLF & TRAVEL CUP" data-circolo="MODENA"><td>10</td><td>29/08/2026</td><td>TOURISTGOLF & TRAVEL CUP</td><td>MODENA</td><td class="num">30.0</td><td class="num">95</td><td class="num">0.0</td><td class="num sd-cell">20.3</td><td class="num">15.1</td><td class="num"><span class="var-neu">—</span></td><td class="top8-cell"></td><td class="link-cell"><a href="https://areariservata.federgolf.it/Risultati/ViewDetail/b5075b25-cda3-f111-b8de-70a8a5a06624" target="_blank" rel="noopener noreferrer">↗ scheda</a></td></tr>
+<tr class="best" data-n="11" data-sd="9.6" data-sd-est="" data-pending="false" data-cr="72.2" data-sr="127.0" data-stbl="44.0" data-ags="83" data-gara="WEGOLFERS PLAY TOUR" data-circolo="MODENA"><td>11</td><td>11/07/2026</td><td>WEGOLFERS PLAY TOUR</td><td>MODENA</td><td class="num">44.0</td><td class="num">83</td><td class="num">0.0</td><td class="num sd-cell">9.6</td><td class="num">15.1</td><td class="num"><span class="var-neg">-2.0</span></td><td class="top8-cell"><span class="badge-ok">★ TOP 8</span></td><td class="link-cell"><a href="https://areariservata.federgolf.it/Risultati/ViewDetail/c3602dfb-3a7d-f111-ab0e-000d3a213cad" target="_blank" rel="noopener noreferrer">↗ scheda</a></td></tr>
+<tr  data-n="12" data-sd="19.4" data-sd-est="" data-pending="false" data-cr="72.2" data-sr="127.0" data-stbl="33.0" data-ags="94" data-gara="WEEKLY BPER BANCA CUP" data-circolo="MODENA"><td>12</td><td>04/07/2026</td><td>WEEKLY BPER BANCA CUP</td><td>MODENA</td><td class="num">33.0</td><td class="num">94</td><td class="num">0.0</td><td class="num sd-cell">19.4</td><td class="num">17.1</td><td class="num"><span class="var-neu">—</span></td><td class="top8-cell"></td><td class="link-cell"><a href="https://areariservata.federgolf.it/Risultati/ViewDetail/8f2596da-b677-f111-ab0e-000d3a4cccf0" target="_blank" rel="noopener noreferrer">↗ scheda</a></td></tr>
+<tr  data-n="13" data-sd="18.5" data-sd-est="" data-pending="false" data-cr="72.2" data-sr="127.0" data-stbl="34.0" data-ags="93" data-gara="I CHALLENGE EMILIA-ROMAGNA GOLF AMATEUR" data-circolo="MODENA"><td>13</td><td>28/06/2026</td><td>I CHALLENGE EMILIA-ROMAGNA GOLF AMATEUR</td><td>MODENA</td><td class="num">34.0</td><td class="num">93</td><td class="num">0.0</td><td class="num sd-cell">18.5</td><td class="num">17.1</td><td class="num"><span class="var-pos">+0.1</span></td><td class="top8-cell"></td><td class="link-cell"><a href="https://areariservata.federgolf.it/Risultati/ViewDetail/4599b433-0173-f111-ab0d-7ced8d5ad87d" target="_blank" rel="noopener noreferrer">↗ scheda</a></td></tr>
+<tr class="best" data-n="14" data-sd="14.9" data-sd-est="" data-pending="false" data-cr="72.2" data-sr="127.0" data-stbl="39.0" data-ags="89" data-gara="MERCEDESTROPHY 2026" data-circolo="MODENA"><td>14</td><td>20/06/2026</td><td>MERCEDESTROPHY 2026</td><td>MODENA</td><td class="num">39.0</td><td class="num">89</td><td class="num">0.0</td><td class="num sd-cell">14.9</td><td class="num">17.0</td><td class="num"><span class="var-neg">-0.6</span></td><td class="top8-cell"><span class="badge-ok">★ TOP 8</span></td><td class="link-cell"><a href="https://areariservata.federgolf.it/Risultati/ViewDetail/f2a732e0-cc6c-f111-ab0d-6045bdf30e59" target="_blank" rel="noopener noreferrer">↗ scheda</a></td></tr>
+<tr class="best" data-n="15" data-sd="13.2" data-sd-est="" data-pending="false" data-cr="72.2" data-sr="127.0" data-stbl="42.0" data-ags="87" data-gara="TETRA PAK FOR WORLD ENVIRONMENT DAY 2026" data-circolo="MODENA"><td>15</td><td>14/06/2026</td><td>TETRA PAK FOR WORLD ENVIRONMENT DAY 2026</td><td>MODENA</td><td class="num">42.0</td><td class="num">87</td><td class="num">0.0</td><td class="num sd-cell">13.2</td><td class="num">17.6</td><td class="num"><span class="var-neg">-0.8</span></td><td class="top8-cell"><span class="badge-ok">★ TOP 8</span></td><td class="link-cell"><a href="https://areariservata.federgolf.it/Risultati/ViewDetail/ee5862e1-1268-f111-ab0d-6045bdf30e59" target="_blank" rel="noopener noreferrer">↗ scheda</a></td></tr>
+<tr  data-n="16" data-sd="20.3" data-sd-est="" data-pending="false" data-cr="72.2" data-sr="127.0" data-stbl="34.0" data-ags="95" data-gara="TROFEO MONOGRAM" data-circolo="MODENA"><td>16</td><td>11/06/2026</td><td>TROFEO MONOGRAM</td><td>MODENA</td><td class="num">34.0</td><td class="num">95</td><td class="num">0.0</td><td class="num sd-cell">20.3</td><td class="num">18.4</td><td class="num"><span class="var-pos">+0.1</span></td><td class="top8-cell"></td><td class="link-cell"><a href="https://areariservata.federgolf.it/Risultati/ViewDetail/1a0a41d0-c165-f111-a826-6045bd8a538a" target="_blank" rel="noopener noreferrer">↗ scheda</a></td></tr>
+<tr  data-n="17" data-sd="22.1" data-sd-est="" data-pending="false" data-cr="72.2" data-sr="127.0" data-stbl="31.0" data-ags="97" data-gara="GOLFITALIANO CUP BY CANTINE SANTADI" data-circolo="MODENA"><td>17</td><td>07/06/2026</td><td>GOLFITALIANO CUP BY CANTINE SANTADI</td><td>MODENA</td><td class="num">31.0</td><td class="num">97</td><td class="num">0.0</td><td class="num sd-cell">22.1</td><td class="num">18.3</td><td class="num"><span class="var-pos">+0.8</span></td><td class="top8-cell"></td><td class="link-cell"><a href="https://areariservata.federgolf.it/Risultati/ViewDetail/0c5bcb56-8962-f111-a826-7ced8d59bf91" target="_blank" rel="noopener noreferrer">↗ scheda</a></td></tr>
+<tr  data-n="18" data-sd="19.4" data-sd-est="" data-pending="false" data-cr="72.2" data-sr="127.0" data-stbl="34.0" data-ags="94" data-gara="TROFEO ZYCAR BY MACOM" data-circolo="MODENA"><td>18</td><td>06/06/2026</td><td>TROFEO ZYCAR BY MACOM</td><td>MODENA</td><td class="num">34.0</td><td class="num">94</td><td class="num">0.0</td><td class="num sd-cell">19.4</td><td class="num">17.5</td><td class="num"><span class="var-neu">—</span></td><td class="top8-cell"></td><td class="link-cell"><a href="https://areariservata.federgolf.it/Risultati/ViewDetail/ed95ee5c-c261-f111-a826-7ced8d59bf91" target="_blank" rel="noopener noreferrer">↗ scheda</a></td></tr>
+<tr  data-n="19" data-sd="18.5" data-sd-est="" data-pending="false" data-cr="72.2" data-sr="127.0" data-stbl="35.0" data-ags="93" data-gara="TROFEO PARMIGIANO REGGIANO 2026 - 5^ Pro" data-circolo="MODENA"><td>19</td><td>04/06/2026</td><td>TROFEO PARMIGIANO REGGIANO 2026 - 5^ Pro</td><td>MODENA</td><td class="num">35.0</td><td class="num">93</td><td class="num">0.0</td><td class="num sd-cell">18.5</td><td class="num">17.5</td><td class="num"><span class="var-neg">-0.1</span></td><td class="top8-cell"></td><td class="link-cell"><a href="https://areariservata.federgolf.it/Risultati/ViewDetail/142843a5-2960-f111-a826-6045bd907320" target="_blank" rel="noopener noreferrer">↗ scheda</a></td></tr>
+<tr  data-n="20" data-sd="22.1" data-sd-est="" data-pending="false" data-cr="72.2" data-sr="127.0" data-stbl="31.0" data-ags="97" data-gara="IN CROCIERA CON ......IL SORRISO" data-circolo="MODENA"><td>20</td><td>30/05/2026</td><td>IN CROCIERA CON ......IL SORRISO</td><td>MODENA</td><td class="num">31.0</td><td class="num">97</td><td class="num">0.0</td><td class="num sd-cell">22.1</td><td class="num">17.6</td><td class="num"><span class="var-neu">—</span></td><td class="top8-cell"></td><td class="link-cell"><a href="https://areariservata.federgolf.it/Risultati/ViewDetail/50a1e597-425c-f111-a826-6045bd907320" target="_blank" rel="noopener noreferrer">↗ scheda</a></td></tr>
+<tr  data-n="21" data-sd="16.7" data-sd-est="" data-pending="false" data-cr="72.2" data-sr="127.0" data-stbl="37.0" data-ags="91" data-gara="RANGE ROVER - THE PRIVILEGE CIRCLE" data-circolo="MODENA"><td>21</td><td>24/05/2026</td><td>RANGE ROVER - THE PRIVILEGE CIRCLE</td><td>MODENA</td><td class="num">37.0</td><td class="num">91</td><td class="num">0.0</td><td class="num sd-cell">16.7</td><td class="num">17.6</td><td class="num"><span class="var-neg">-0.1</span></td><td class="top8-cell"></td><td class="link-cell"><a href="https://areariservata.federgolf.it/Risultati/ViewDetail/b4d3f4f4-8557-f111-bec7-6045bdf30e59" target="_blank" rel="noopener noreferrer">↗ scheda</a></td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="legend" id="legend">
+  <div class="leg"><span class="dot" style="background:var(--ok)"></span><span>Top 8 reali</span></div>
+  <div class="leg"><span class="badge-warn" style="font-size:10px">?</span><span>SD non elaborato da FIG</span></div>
+</div>
+<div class="note-box" id="pendingStatic">⚠️ SD non ancora elaborato da FIG per: <strong>COPPA DEL PRESIDENTE</strong>. Non incluse nel perimetro delle 20 gare.</div>
+<script>
+const ROWS = Array.from(document.querySelectorAll('#tbody tr')).map(tr => ({
+  n:       tr.dataset.n,
+  gara:    tr.dataset.gara,
+  circolo: tr.dataset.circolo,
+  sd:      tr.dataset.sd    !== '' ? parseFloat(tr.dataset.sd)    : null,
+  sd_est:  tr.dataset.sdEst !== '' ? parseFloat(tr.dataset.sdEst) : null,
+  pending: tr.dataset.pending === 'true',
+  cr:      parseFloat(tr.dataset.cr),
+  sr:      parseFloat(tr.dataset.sr),
+  stbl:    tr.dataset.stbl !== 'NR' ? parseFloat(tr.dataset.stbl) : null,
+  ags:     tr.dataset.ags  !== '—'  ? parseFloat(tr.dataset.ags)  : null,
+  _tr:     tr,
+}));
+const CR_DEF = 72.2;
+const SR_DEF = 127.0;
+const IDX_FIG = '13.8';
+const AVG_SD_REAL = 14.2;
+
+let mode = 'real';  // 'real' | 'sim' | 'proj'
+let projRow = null;
+
+function top8from(arr) {
+  return new Set([...arr].sort((a,b) => a._sd - b._sd).slice(0,8).map(r => r.n));
+}
+
+function buildDataset() {
+  const withSD  = ROWS.filter(r => !r.pending && r.sd != null);
+  const pending = ROWS.filter(r =>  r.pending && r.sd_est != null);
+  let perim = [], outN = null;
+
+  if (mode === 'sim' && pending.length) {
+    const p = pending[0];
+    if (withSD.length >= 20) outN = withSD[19].n;
+    perim = [{...p, _sd: p.sd_est}, ...withSD.slice(0,19).map(r => ({...r, _sd: r.sd}))];
+  } else if (mode === 'proj' && projRow) {
+    if (withSD.length >= 20) outN = withSD[19].n;
+    perim = [{...projRow, _sd: projRow.sd_est}, ...withSD.slice(0,19).map(r => ({...r, _sd: r.sd}))];
+  } else {
+    perim = withSD.slice(0,20).map(r => ({...r, _sd: r.sd}));
+  }
+  return { perim, top8: top8from(perim), outN };
+}
+
+function calcStats(perim, top8) {
+  const best = perim.filter(r => top8.has(r.n));
+  if (!best.length) return { n:0, avg:'—', bestSD:'—', avgStbl:'—' };
+  const avgSD = best.reduce((s,r) => s + r._sd, 0) / best.length;
+  const stbls = best.map(r => r.stbl).filter(v => v != null);
+  return {
+    n:       best.length,
+    avg:     avgSD.toFixed(1),
+    bestSD:  Math.min(...best.map(r => r._sd)).toFixed(1),
+    avgStbl: stbls.length ? (stbls.reduce((s,v)=>s+v,0)/stbls.length).toFixed(1) : '—',
+  };
+}
+
+function render() {
+  const { perim, top8, outN } = buildDataset();
+  const st = calcStats(perim, top8);
+  const hi  = mode === 'sim'  ? 'hi'  : mode === 'proj' ? 'hi2' : '';
+
+  // ── stat cards ──────────────────────────────────────────────────────
+  ['cN','cAvg','cBest','cStbl'].forEach(id => {
+    const c = document.getElementById(id);
+    c.className = 'card' + (hi ? ' '+hi : '');
+  });
+  ['vN','vAvg','vBest','vStbl'].forEach(id => {
+    const v = document.getElementById(id);
+    v.className = 'card-value' + (hi ? ' '+hi : '');
+  });
+  document.getElementById('vN').innerHTML =
+    st.n + '<span style="font-size:14px;color:var(--muted)">/20</span>';
+  document.getElementById('vAvg').textContent  = st.avg;
+  document.getElementById('vBest').textContent = st.bestSD;
+  document.getElementById('vStbl').textContent = st.avgStbl;
+
+  // ── righe tabella ───────────────────────────────────────────────────
+  // rimuovi riga proiezione virtuale precedente
+  document.querySelectorAll('.vrow').forEach(r => r.remove());
+
+  ROWS.forEach(r => {
+    const tr     = r._tr;
+    const inTop8 = top8.has(r.n);
+    const isOut  = r.n === outN;
+
+    tr.className = '';
+    if      (isOut)               tr.classList.add('out');
+    else if (inTop8 && mode==='sim')  tr.classList.add('sim-best');
+    else if (inTop8 && mode==='proj') tr.classList.add('proj-best');
+    else if (inTop8)              tr.classList.add('best');
+
+    // SD cell
+    const sdCell = tr.querySelector('.sd-cell');
+    if (r.pending && mode === 'sim' && r.sd_est != null)
+      sdCell.innerHTML = '<span class="badge-sim">' + r.sd_est.toFixed(1) + ' ~</span>';
+    else if (r.pending)
+      sdCell.innerHTML = '<span class="badge-warn">?</span>';
+    else
+      sdCell.textContent = r.sd != null ? r.sd.toFixed(1) : '—';
+
+    // Stato cell
+    const t8 = tr.querySelector('.top8-cell');
+    if      (inTop8 && mode==='sim')  t8.innerHTML = '<span class="badge-sim">★ SIM</span>';
+    else if (inTop8 && mode==='proj') t8.innerHTML = '<span class="badge-proj">★ SIM</span>';
+    else if (inTop8)                  t8.innerHTML = '<span class="badge-ok">★ TOP 8</span>';
+    else if (isOut)                   t8.innerHTML = '<span style="color:var(--muted);font-size:11px">↩ esce</span>';
+    else if (r.pending)               t8.innerHTML = '<span class="badge-warn">⚠ pending</span>';
+    else                              t8.innerHTML = '';
+  });
+
+  // riga virtuale proiezione
+  if (mode === 'proj' && projRow) {
+    const inTop8 = top8.has('PROJ');
+    const tbody = document.getElementById('tbody');
+    const tr = document.createElement('tr');
+    tr.className = (inTop8 ? 'proj-best' : '') + ' vrow';
+    tr.innerHTML =
+      '<td>★</td><td>—</td><td><strong>GARA PROIETTATA</strong></td><td>—</td>' +
+      '<td class="num">' + projRow.stbl + '</td>' +
+      '<td class="num">' + projRow.ags  + '</td>' +
+      '<td class="num">—</td>' +
+      '<td class="num"><span class="badge-proj">' + projRow.sd_est.toFixed(1) + ' ~</span></td>' +
+      '<td class="num">—</td><td class="num">—</td>' +
+      '<td><span class="badge-proj">PROIEZ.</span></td><td>—</td>';
+    tbody.insertBefore(tr, tbody.firstChild);
+  }
+
+  // ── banner ──────────────────────────────────────────────────────────
+  const banner = document.getElementById('banner');
+  const withSD = ROWS.filter(r => !r.pending && r.sd != null);
+  const outRow = withSD.find(r => r.n === outN);
+  if (mode === 'sim') {
+    const p = ROWS.find(r => r.pending && r.sd_est != null);
+    banner.className = 'banner sim';
+    banner.innerHTML = '🔮 <strong>Simulazione gara odierna</strong> — SD stimato per <strong>'
+      + (p ? p.gara : '?') + '</strong>: <strong>'
+      + (p ? p.sd_est.toFixed(1) : '?') + '</strong>.'
+      + (outRow ? ' Esce: <strong>' + outRow.gara + '</strong> (SD ' + outRow.sd.toFixed(1) + ').' : '');
+  } else if (mode === 'proj' && projRow) {
+    banner.className = 'banner proj';
+    banner.innerHTML = '📐 <strong>Proiezione</strong> — SD stimato: <strong>'
+      + projRow.sd_est.toFixed(1) + '</strong>'
+      + ' (Stbl ' + projRow.stbl + ', AGS ' + projRow.ags
+      + ', CR ' + projRow.cr + ', SR ' + projRow.sr + ').'
+      + (outRow ? ' Esce: <strong>' + outRow.gara + '</strong> (SD ' + outRow.sd.toFixed(1) + ').' : '');
+  } else {
+    banner.className = 'banner';
+    banner.innerHTML = '';
+  }
+
+  // ── pending note ────────────────────────────────────────────────────
+  const pn = document.getElementById('pendingStatic');
+  if (pn) pn.style.display = (mode === 'real') ? '' : 'none';
+
+  // ── legend ──────────────────────────────────────────────────────────
+  const leg = document.getElementById('legend');
+  let legHTML =
+    '<div class="leg"><span class="dot" style="background:var(--ok)"></span><span>Top 8 reali</span></div>';
+  if (mode === 'sim')
+    legHTML += '<div class="leg"><span class="dot" style="background:var(--sim)"></span><span>Top 8 simulate</span></div>';
+  if (mode === 'proj')
+    legHTML += '<div class="leg"><span class="dot" style="background:var(--proj)"></span><span>Top 8 proiettate</span></div>';
+  legHTML += '<div class="leg"><span class="badge-warn" style="font-size:10px">?</span><span>SD non elaborato da FIG</span></div>';
+  if (mode !== 'real')
+    legHTML += '<div class="leg"><span style="color:var(--muted);font-size:11px">↩ esce</span><span>Esce dal perimetro</span></div>';
+  leg.innerHTML = legHTML;
+
+  // ── pulsanti ────────────────────────────────────────────────────────
+  document.getElementById('btnBack').style.display = mode !== 'real' ? '' : 'none';
+  document.getElementById('btnSim').classList.toggle('active', mode === 'sim');
+  document.getElementById('btnProj').classList.toggle('active', mode === 'proj');
+  document.getElementById('projPanel').classList.toggle('open', mode === 'proj');
+}
+
+function goReal() {
+  mode = 'real'; projRow = null;
+  document.getElementById('projResult').className = 'proj-result';
+  render();
+}
+function toggleSim()  { mode = mode === 'sim'  ? 'real' : 'sim';  render(); }
+function toggleProj() {
+  if (mode === 'proj') { goReal(); return; }
+  mode = 'proj'; render();
+  document.getElementById('pStbl').focus();
+}
+
+function calcProj() {
+  const stbl   = parseFloat(document.getElementById('pStbl').value);
+  const agsRaw = document.getElementById('pAgs').value.trim();
+  const cr     = parseFloat(document.getElementById('pCr').value) || CR_DEF;
+  const sr     = parseFloat(document.getElementById('pSr').value) || SR_DEF;
+  if (isNaN(stbl)) {
+    document.getElementById('projResult').className = 'proj-result show';
+    document.getElementById('projResult').innerHTML = '⚠️ Inserisci almeno lo Stableford.';
+    return;
+  }
+  const par   = parseFloat(document.getElementById('pPar').value) || 72;
+  const idx   = parseFloat(IDX_FIG);
+  if (agsRaw === '' && isNaN(idx)) {
+    document.getElementById('projResult').className = 'proj-result show';
+    document.getElementById('projResult').innerHTML = '⚠️ Index FIG non disponibile: inserisci anche l'AGS.';
+    return;
+  }
+  // Course Handicap WHS: Index × SR/113 + (CR − Par); AGS = Par + CH + (36 − Stableford)
+  const ch    = Math.round(idx * sr / 113 + (cr - par));
+  const ags   = agsRaw !== '' ? parseFloat(agsRaw) : par + ch + (36 - stbl);
+  const sdEst = parseFloat(((ags - cr) * 113 / sr).toFixed(1));
+  projRow = { n:'PROJ', gara:'GARA PROIETTATA', stbl, ags, cr, sr, sd_est: sdEst };
+
+  const withSD = ROWS.filter(r => !r.pending && r.sd != null);
+  const old8   = withSD.slice(0,20).map(r=>r.sd).sort((a,b)=>a-b).slice(0,8);
+  const oldAvg = (old8.reduce((s,v)=>s+v,0)/8).toFixed(1);
+  const newArr = [sdEst, ...withSD.slice(0,19).map(r=>r.sd)].sort((a,b)=>a-b);
+  const newAvg = (newArr.slice(0,8).reduce((s,v)=>s+v,0)/8).toFixed(1);
+  const inTop8 = newArr.slice(0,8).includes(sdEst);
+  const exitG  = withSD[19];
+  const dir    = parseFloat(newAvg) < parseFloat(oldAvg) ? '📉 migliora' : '📈 peggiora';
+
+  document.getElementById('projResult').className = 'proj-result show';
+  document.getElementById('projResult').innerHTML =
+    'SD stimato: <strong>' + sdEst.toFixed(1) + '</strong>' + (agsRaw === '' ? ' (CH ' + ch + ', AGS ' + ags + ')' : '') + ' &nbsp;|&nbsp; ' +
+    (inTop8 ? '✅ <strong>Entra nelle Top 8</strong>' : '❌ Non entra nelle Top 8') +
+    ' &nbsp;|&nbsp; Media Top 8: <strong>' + oldAvg + ' → ' + newAvg + '</strong> (' + dir + ')' +
+    (exitG ? ' &nbsp;|&nbsp; Esce: <strong>' + exitG.gara + '</strong> (SD ' + exitG.sd.toFixed(1) + ')' : '');
+
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
