@@ -1,6 +1,26 @@
 {
   "gare": [
     {
+      "data": "08/11/2026",
+      "buche": "18",
+      "gara": "GREEN PASS CARD TROPHY 2027",
+      "circolo": "MODENA",
+      "stbl": 31.0,
+      "ags": 93.0,
+      "pcc": null,
+      "sd": null,
+      "sd_est": 18.5,
+      "cr": 72.2,
+      "sr": 127.0,
+      "idxN": 13.8,
+      "idxV": 13.8,
+      "var": 0.0,
+      "pending": true,
+      "link": "https://areariservata.federgolf.it/Risultati/ViewDetail/ae0c7692-8cdb-f111-84e8-70a8a532fcae",
+      "top8": false,
+      "n": 1
+    },
+    {
       "data": "07/11/2026",
       "buche": "18",
       "gara": "COPPA DEL PRESIDENTE",
@@ -18,7 +38,7 @@
       "pending": false,
       "link": "https://areariservata.federgolf.it/Risultati/ViewDetail/850d978e-c6da-f111-84e8-7c1e524f85e3",
       "top8": false,
-      "n": 1
+      "n": 2
     },
     {
       "data": "15/10/2026",
@@ -38,7 +58,7 @@
       "pending": false,
       "link": "https://areariservata.federgolf.it/Risultati/ViewDetail/f6aa0783-c4c8-f111-aaad-7ced8d8bfeb7",
       "top8": true,
-      "n": 2
+      "n": 3
     },
     {
       "data": "26/09/2026",
@@ -58,7 +78,7 @@
       "pending": false,
       "link": "https://areariservata.federgolf.it/Risultati/ViewDetail/3174422f-cab9-f111-aaae-000d3aa9a289",
       "top8": true,
-      "n": 3
+      "n": 4
     },
     {
       "data": "23/09/2026",
@@ -78,7 +98,7 @@
       "pending": false,
       "link": "https://areariservata.federgolf.it/Risultati/ViewDetail/b7852624-56b7-f111-aaac-000d3aa9a289",
       "top8": true,
-      "n": 4
+      "n": 5
     },
     {
       "data": "19/09/2026",
@@ -98,7 +118,7 @@
       "pending": false,
       "link": "https://areariservata.federgolf.it/Risultati/ViewDetail/1eafa309-c3b4-f111-aaac-6045bd96fca1",
       "top8": true,
-      "n": 5
+      "n": 6
     },
     {
       "data": "16/09/2026",
@@ -118,7 +138,7 @@
       "pending": false,
       "link": "https://areariservata.federgolf.it/Risultati/ViewDetail/21acce7b-e0b1-f111-aaac-000d3aa9a289",
       "top8": false,
-      "n": 6
+      "n": 7
     },
     {
       "data": "10/09/2026",
@@ -138,7 +158,7 @@
       "pending": false,
       "link": "https://areariservata.federgolf.it/Risultati/ViewDetail/5d854c21-0fad-f111-aaac-7c1e5228da62",
       "top8": true,
-      "n": 7
+      "n": 8
     },
     {
       "data": "06/09/2026",
@@ -158,7 +178,7 @@
       "pending": false,
       "link": "https://areariservata.federgolf.it/Risultati/ViewDetail/d6bbd133-17aa-f111-aaac-70a8a5a06624",
       "top8": false,
-      "n": 8
+      "n": 9
     },
     {
       "data": "03/09/2026",
@@ -178,7 +198,7 @@
       "pending": false,
       "link": "https://areariservata.federgolf.it/Risultati/ViewDetail/9332cc75-c3a7-f111-b8dd-000d3aa9a209",
       "top8": false,
-      "n": 9
+      "n": 10
     },
     {
       "data": "29/08/2026",
@@ -198,7 +218,7 @@
       "pending": false,
       "link": "https://areariservata.federgolf.it/Risultati/ViewDetail/b5075b25-cda3-f111-b8de-70a8a5a06624",
       "top8": false,
-      "n": 10
+      "n": 11
     },
     {
       "data": "11/07/2026",
@@ -218,7 +238,7 @@
       "pending": false,
       "link": "https://areariservata.federgolf.it/Risultati/ViewDetail/c3602dfb-3a7d-f111-ab0e-000d3a213cad",
       "top8": true,
-      "n": 11
+      "n": 12
     },
     {
       "data": "04/07/2026",
@@ -238,7 +258,7 @@
       "pending": false,
       "link": "https://areariservata.federgolf.it/Risultati/ViewDetail/8f2596da-b677-f111-ab0e-000d3a4cccf0",
       "top8": false,
-      "n": 12
+      "n": 13
     },
     {
       "data": "28/06/2026",
@@ -258,7 +278,7 @@
       "pending": false,
       "link": "https://areariservata.federgolf.it/Risultati/ViewDetail/4599b433-0173-f111-ab0d-7ced8d5ad87d",
       "top8": false,
-      "n": 13
+      "n": 14
     },
     {
       "data": "20/06/2026",
@@ -278,7 +298,7 @@
       "pending": false,
       "link": "https://areariservata.federgolf.it/Risultati/ViewDetail/f2a732e0-cc6c-f111-ab0d-6045bdf30e59",
       "top8": true,
-      "n": 14
+      "n": 15
     },
     {
       "data": "14/06/2026",
@@ -298,7 +318,7 @@
       "pending": false,
       "link": "https://areariservata.federgolf.it/Risultati/ViewDetail/ee5862e1-1268-f111-ab0d-6045bdf30e59",
       "top8": true,
-      "n": 15
+      "n": 16
     },
     {
       "data": "11/06/2026",
@@ -318,7 +338,7 @@
       "pending": false,
       "link": "https://areariservata.federgolf.it/Risultati/ViewDetail/1a0a41d0-c165-f111-a826-6045bd8a538a",
       "top8": false,
-      "n": 16
+      "n": 17
     },
     {
       "data": "07/06/2026",
@@ -338,7 +358,7 @@
       "pending": false,
       "link": "https://areariservata.federgolf.it/Risultati/ViewDetail/0c5bcb56-8962-f111-a826-7ced8d59bf91",
       "top8": false,
-      "n": 17
+      "n": 18
     },
     {
       "data": "06/06/2026",
@@ -358,7 +378,7 @@
       "pending": false,
       "link": "https://areariservata.federgolf.it/Risultati/ViewDetail/ed95ee5c-c261-f111-a826-7ced8d59bf91",
       "top8": false,
-      "n": 18
+      "n": 19
     },
     {
       "data": "04/06/2026",
@@ -378,7 +398,7 @@
       "pending": false,
       "link": "https://areariservata.federgolf.it/Risultati/ViewDetail/142843a5-2960-f111-a826-6045bd907320",
       "top8": false,
-      "n": 19
+      "n": 20
     },
     {
       "data": "30/05/2026",
@@ -398,7 +418,7 @@
       "pending": false,
       "link": "https://areariservata.federgolf.it/Risultati/ViewDetail/50a1e597-425c-f111-a826-6045bd907320",
       "top8": false,
-      "n": 20
+      "n": 21
     }
   ],
   "stats": {
@@ -409,7 +429,7 @@
     "idx_fig": 13.8,
     "theoretical_idx": 14.2
   },
-  "updated_at": "08/11/2026 15:47",
+  "updated_at": "08/11/2026 15:55",
   "hist": [
     {
       "d": "10/02/2021",
