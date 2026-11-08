@@ -8,14 +8,14 @@
       "stbl": 30.0,
       "ags": 94.0,
       "pcc": 1.0,
-      "sd": null,
-      "sd_est": 18.5,
+      "sd": 18.5,
+      "sd_est": null,
       "cr": 72.2,
       "sr": 127.0,
       "idxN": 13.8,
       "idxV": 13.8,
       "var": 0.0,
-      "pending": true,
+      "pending": false,
       "link": "https://areariservata.federgolf.it/Risultati/ViewDetail/850d978e-c6da-f111-84e8-7c1e524f85e3",
       "top8": false,
       "n": 1
@@ -399,26 +399,6 @@
       "link": "https://areariservata.federgolf.it/Risultati/ViewDetail/50a1e597-425c-f111-a826-6045bd907320",
       "top8": false,
       "n": 20
-    },
-    {
-      "data": "24/05/2026",
-      "buche": "18",
-      "gara": "RANGE ROVER - THE PRIVILEGE CIRCLE",
-      "circolo": "MODENA",
-      "stbl": 37.0,
-      "ags": 91.0,
-      "pcc": 0.0,
-      "sd": 16.7,
-      "sd_est": null,
-      "cr": 72.2,
-      "sr": 127.0,
-      "idxN": 17.6,
-      "idxV": 17.7,
-      "var": -0.1,
-      "pending": false,
-      "link": "https://areariservata.federgolf.it/Risultati/ViewDetail/b4d3f4f4-8557-f111-bec7-6045bdf30e59",
-      "top8": false,
-      "n": 21
     }
   ],
   "stats": {
@@ -429,7 +409,7 @@
     "idx_fig": 13.8,
     "theoretical_idx": 14.2
   },
-  "updated_at": "07/11/2026 23:49",
+  "updated_at": "08/11/2026 07:44",
   "hist": [
     {
       "d": "10/02/2021",
@@ -1713,6 +1693,12 @@
       "d": "15/10/2026",
       "sd": 14.9,
       "iv": 13.9,
+      "in": 13.8
+    },
+    {
+      "d": "07/11/2026",
+      "sd": 18.5,
+      "iv": 13.8,
       "in": 13.8
     }
   ]
