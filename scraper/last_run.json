@@ -7,15 +7,15 @@
       "circolo": "MODENA",
       "stbl": 31.0,
       "ags": 93.0,
-      "pcc": null,
-      "sd": null,
-      "sd_est": 18.5,
+      "pcc": 1.0,
+      "sd": 17.6,
+      "sd_est": null,
       "cr": 72.2,
       "sr": 127.0,
       "idxN": 13.8,
       "idxV": 13.8,
       "var": 0.0,
-      "pending": true,
+      "pending": false,
       "link": "https://areariservata.federgolf.it/Risultati/ViewDetail/ae0c7692-8cdb-f111-84e8-70a8a532fcae",
       "top8": false,
       "n": 1
@@ -399,26 +399,6 @@
       "link": "https://areariservata.federgolf.it/Risultati/ViewDetail/142843a5-2960-f111-a826-6045bd907320",
       "top8": false,
       "n": 20
-    },
-    {
-      "data": "30/05/2026",
-      "buche": "18",
-      "gara": "IN CROCIERA CON ......IL SORRISO",
-      "circolo": "MODENA",
-      "stbl": 31.0,
-      "ags": 97.0,
-      "pcc": 0.0,
-      "sd": 22.1,
-      "sd_est": null,
-      "cr": 72.2,
-      "sr": 127.0,
-      "idxN": 17.6,
-      "idxV": 17.6,
-      "var": 0.0,
-      "pending": false,
-      "link": "https://areariservata.federgolf.it/Risultati/ViewDetail/50a1e597-425c-f111-a826-6045bd907320",
-      "top8": false,
-      "n": 21
     }
   ],
   "stats": {
@@ -429,7 +409,7 @@
     "idx_fig": 13.8,
     "theoretical_idx": 14.2
   },
-  "updated_at": "08/11/2026 15:55",
+  "updated_at": "09/11/2026 13:00",
   "hist": [
     {
       "d": "10/02/2021",
@@ -1718,6 +1698,12 @@
     {
       "d": "07/11/2026",
       "sd": 18.5,
+      "iv": 13.8,
+      "in": 13.8
+    },
+    {
+      "d": "08/11/2026",
+      "sd": 17.6,
       "iv": 13.8,
       "in": 13.8
     }
