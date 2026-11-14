@@ -86,13 +86,31 @@ def login(page):
 
 
 def parse_rows(page):
-    print("Navigo su ShowGrid...")
-    page.goto(f"{FIG_URL}/Risultati/ShowGrid", wait_until="domcontentloaded")
-    page.wait_for_load_state("networkidle", timeout=15000)
-    page.wait_for_timeout(1500)
+    rows = []
+    for tentativo in range(1, 4):
+        print(f"Navigo su ShowGrid... (tentativo {tentativo}/3)")
+        page.goto(f"{FIG_URL}/Risultati/ShowGrid", wait_until="domcontentloaded")
+        try:
+            page.wait_for_load_state("networkidle", timeout=15000)
+        except Exception:
+            pass
+        try:
+            page.wait_for_selector("table tbody tr", timeout=20000)
+        except Exception:
+            pass
+        page.wait_for_timeout(1500)
+        rows = page.query_selector_all("table tbody tr")
+        print(f"Trovate {len(rows)} righe totali")
+        if rows:
+            break
+        page.wait_for_timeout(5000 * tentativo)
 
-    rows = page.query_selector_all("table tbody tr")
-    print(f"Trovate {len(rows)} righe totali")
+    if not rows:
+        page.screenshot(path="scraper/debug_showgrid.png", full_page=True)
+        raise RuntimeError(
+            "ShowGrid FIG vuota dopo 3 tentativi: index.html non aggiornato, "
+            "restano i dati dell'ultimo run riuscito."
+        )
 
     pending_rows = []  # Valida=S ma SD non ancora elaborato (mostrate ma fuori perimetro)
     gare = []          # Valida=S con SD disponibile (perimetro reale FIG, max 20)
@@ -813,6 +831,11 @@ def main():
             login(page)
             gare = parse_rows(page)
             stats = calc_stats(gare)
+            if not stats:
+                raise RuntimeError(
+                    f"Nessuna gara con SD valida ({len(gare)} righe lette): "
+                    "index.html non aggiornato, restano i dati dell'ultimo run riuscito."
+                )
             hist = fetch_history(page)
             print(f"Stats: {stats}")
             updated_at = datetime.now().strftime("%d/%m/%Y %H:%M")
